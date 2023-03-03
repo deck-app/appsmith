@@ -7,6 +7,11 @@ then
     echo "Apps alrady installed."
 else
     cp -a /opt/appsmith/* /var/www/html/
+    # cp -a /opt/appsmith/index.html.original /var/www/html/
+    rm -rf /etc/nginx/sites-enabled/default
+    rm -rf /etc/nginx/sites-available/default
+    cp /app/smith.conf /etc/nginx/conf.d/smith.conf
+    nginx -s reload -t
 fi
 stacks_path=/appsmith-stacks
 
@@ -29,7 +34,7 @@ function setup_backend_heap_arg() {
 init_env_file() {
   CONF_PATH="/appsmith-stacks/configuration"
   ENV_PATH="$CONF_PATH/docker.env"
-  TEMPLATES_PATH="/opt/appsmith/templates"
+  TEMPLATES_PATH="/var/www/html/templates"
 
   # Build an env file with current env variables. We single-quote the values, as well as escaping any single-quote characters.
   printenv | grep -E '^APPSMITH_|^MONGO_' | sed "s/'/'\"'\"'/; s/=/='/; s/$/'/" > "$TEMPLATES_PATH/pre-define.env"
@@ -254,7 +259,7 @@ check_setup_custom_ca_certificates() {
 }
 
 configure_supervisord() {
-  SUPERVISORD_CONF_PATH="/opt/appsmith/templates/supervisord"
+  SUPERVISORD_CONF_PATH="/var/www/html/templates/supervisord"
   if [[ -n "$(ls -A /etc/supervisor/conf.d)" ]]; then
     rm -f "/etc/supervisor/conf.d/"*
   fi
