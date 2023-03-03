@@ -6,6 +6,7 @@ if [[ -d "/var/www/backend" ]]
 then
     echo "Apps alrady installed."
 else
+    echo >&2 "Appsmith not found in $(pwd) - Create apps please patience..."
     cp -a /opt/appsmith/* /var/www/html/
     # cp -a /opt/appsmith/index.html.original /var/www/html/
     rm -rf /etc/nginx/sites-enabled/default
